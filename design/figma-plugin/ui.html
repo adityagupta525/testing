@@ -30,21 +30,21 @@
     margin-bottom: 6px;
   }
   button.primary { background: #2A2C32; color: #FAF7F1; }
+  button.gold    { background: #F4D58A; border-color: #B8911C; color: #7A5A1E; }
   button:hover { background: #F2EEE3; }
   button.primary:hover { background: #1F2024; }
-  button:disabled { opacity: 0.4; cursor: not-allowed; }
+  button.gold:hover { background: #EFC56C; }
+  select {
+    width: 100%; height: 32px; padding: 0 8px;
+    border-radius: 6px; border: 1px solid #6B6E78;
+    background: #FAF7F1; font-size: 12px; margin-bottom: 8px;
+  }
   #log {
-    margin-top: 12px;
-    padding: 8px;
-    background: #F2EEE3;
-    border-radius: 4px;
+    margin-top: 12px; padding: 8px;
+    background: #F2EEE3; border-radius: 4px;
     font-family: ui-monospace, Menlo, monospace;
-    font-size: 10px;
-    line-height: 1.5;
-    color: #3D3F46;
-    max-height: 220px;
-    overflow-y: auto;
-    white-space: pre-wrap;
+    font-size: 10px; line-height: 1.5; color: #3D3F46;
+    max-height: 200px; overflow-y: auto; white-space: pre-wrap;
   }
   .ok   { color: #2C5A2A; }
   .err  { color: #7A1F15; }
@@ -53,7 +53,7 @@
 </head>
 <body>
   <h1>Centricity NRI · Onboarding Builder</h1>
-  <div class="sub">Creates design tokens + draws onboarding screens.</div>
+  <div class="sub">Tokens + 18 onboarding frames, self-contained.</div>
 
   <div class="section">
     <h2><span class="step-num">1</span>Setup design tokens</h2>
@@ -61,16 +61,36 @@
   </div>
 
   <div class="section">
-    <h2><span class="step-num">2</span>Build splash (first cut)</h2>
-    <button id="build-s01" class="primary">Build S-01 · Splash</button>
+    <h2><span class="step-num">2</span>Build all 18 screens</h2>
+    <button id="build-all" class="gold">Build entire onboarding flow</button>
   </div>
 
   <div class="section">
-    <h2><span class="step-num">3</span>After your approval</h2>
-    <button disabled>Build all 17 remaining screens (locked until S-01 approved)</button>
+    <h2><span class="step-num">3</span>Or build one</h2>
+    <select id="screen-select">
+      <option value="S-01">S-01 · Splash</option>
+      <option value="S-02">S-02 · Value Prop</option>
+      <option value="S-03">S-03 · Sign In</option>
+      <option value="O-01">O-01 · Mobile OTP</option>
+      <option value="O-02">O-02 · Email OTP</option>
+      <option value="O-03">O-03 · Country</option>
+      <option value="O-04">O-04 · PFIC Disclosure</option>
+      <option value="O-05">O-05 · PAN</option>
+      <option value="O-06a">O-06a · CKYCR fast-track</option>
+      <option value="O-08">O-08 · Passport OCR</option>
+      <option value="O-08c">O-08c · Video KYC</option>
+      <option value="O-09a">O-09a · Bank · form</option>
+      <option value="O-09b">O-09b · Bank · verifying</option>
+      <option value="O-09c">O-09c · Bank · verified</option>
+      <option value="O-10">O-10 · Risk Profile</option>
+      <option value="O-11">O-11 · Nominee</option>
+      <option value="O-12">O-12 · Review + eSign</option>
+      <option value="O-13">O-13 · Account Active</option>
+    </select>
+    <button id="build-one">Build selected screen</button>
   </div>
 
-  <div id="log">Ready. Click "Setup variables" first.</div>
+  <div id="log">Ready. Click "Setup variables" first (only once per file).</div>
 
 <script>
   const log = document.getElementById('log');
@@ -87,9 +107,14 @@
     clearLog();
     parent.postMessage({ pluginMessage: { type: 'setup-variables' } }, '*');
   };
-  document.getElementById('build-s01').onclick = () => {
+  document.getElementById('build-all').onclick = () => {
     clearLog();
-    parent.postMessage({ pluginMessage: { type: 'build', screen: 'S-01' } }, '*');
+    parent.postMessage({ pluginMessage: { type: 'build-all' } }, '*');
+  };
+  document.getElementById('build-one').onclick = () => {
+    clearLog();
+    const sel = document.getElementById('screen-select').value;
+    parent.postMessage({ pluginMessage: { type: 'build', screen: sel } }, '*');
   };
 
   window.onmessage = (e) => {
